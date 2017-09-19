@@ -32,6 +32,7 @@ tee src/etc/resolv.conf <<-EOF
 nameserver 8.8.8.8
 EOF
 
+
 tee src/etc/services-config/supervisor/supervisord.d/nslcd.conf <<-EOF
 [program:nslcd]
 command=/usr/sbin/nslcd
