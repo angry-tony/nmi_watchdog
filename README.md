@@ -6,7 +6,7 @@
 tee /etc/sysctl.d/kernel.watchdog_thresh.conf << 'EOF'
 kernel.watchdog_thresh = 60
 #kernel.unknown_nmi_panic = 0  # disable unknown nmi watchdog
-#kernel.nmi_watchdog = 0            # disable nmi watchdog
+#kernel.nmi_watchdog = 0       # disable nmi watchdog
 EOF
 ```
 
