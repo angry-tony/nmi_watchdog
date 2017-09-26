@@ -1,3 +1,57 @@
+```
+sudo sh -c 'systemctl kill -s SIGUSR1 dcos-mesos-master && systemctl stop dcos-mesos-master'; \
+rm -f /var/lib/dcos/mesos-resources; \
+systemctl start dcos-mesos-master
+
+sudo sh -c 'systemctl kill -s SIGUSR1 dcos-mesos-slave && systemctl stop dcos-mesos-slave'; \
+rm -rf /var/lib/mesos/slave/meta/slaves/latest/; \
+systemctl restart dcos-mesos-slave
+
+sudo sh -c 'systemctl kill -s SIGUSR1 dcos-mesos-slave-public && systemctl stop dcos-mesos-slave-public'; \
+rm -rf /var/lib/mesos/slave/meta/slaves/latest/; \
+systemctl restart dcos-mesos-slave-public
+```
+
+```
+sudo tee /etc/docker/daemon.json << 'EOF'
+{
+    "storage-driver": "overlay",
+    "insecure-registries": [ "ldap-nfs-pdr-01", "192.168.147.101" ],
+    "dns": [ "16.110.135.51", "16.110.135.52" ]
+}
+EOF
+```
+
+```
+tee /etc/mesosphere/docker_credentials << 'EOF'
+{
+        "auths": {
+                "pdr-01:5000": {
+                        "auth": "dGVzdDoxMjM="
+                }
+        }
+}
+EOF
+
+/opt/mesosphere/etc/mesos-slave-common:
+MESOS_DOCKER_REGISTRY=http://nas.ajway.kr:6000
+
+MESOS_DOCKER_CONFIG=file:///etc/mesosphere/docker_credentials
+```
+
+```
+for i in dcos-master-1 dcos-slave-1 dcos-pub-slave-01; do ssh $i "rm -rf /etc/pki/ca-trust/source/anchors/*"& done
+for i in dcos-master-1 dcos-slave-1 dcos-pub-slave-01; do ssh $i "ls -l  /etc/pki/ca-trust/source/anchors/*"; done
+for i in dcos-master-1 dcos-slave-1 dcos-pub-slave-01; do ssh $i "update-ca-trust force-enable && update-ca-trust enable && update-ca-trust extract"& done
+
+
+for i in dcos-master-1 dcos-slave-1 dcos-pub-slave-01; do ssh $i "cp /opt/mesosphere/active/python-requests/lib/python3.5/site-packages/requests/cacert.pem /opt/mesosphere/active/python-requests/lib/python3.5/site-packages/requests/cacert.pem.BAK"; done
+
+for i in dcos-master-1 dcos-slave-1 dcos-pub-slave-01; do ssh $i "rm -rf /opt/mesosphere/active/python-requests/lib/python3.5/site-packages/requests/cacert.pem"; done
+for i in dcos-master-1 dcos-slave-1 dcos-pub-slave-01; do ssh $i "cp /opt/mesosphere/active/python-requests/lib/python3.5/site-packages/requests/cacert.pem.BAK /opt/mesosphere/active/python-requests/lib/python3.5/site-packages/requests/cacert.pem"; done
+for i in dcos-master-1 dcos-slave-1 dcos-pub-slave-01; do cat /etc/pki/ca-trust/source/anchors/portus-CA.crt | ssh $i "cat >> /opt/mesosphere/active/python-requests/lib/python3.5/site-packages/requests/cacert.pem"; done
+```
+
 ...
 
 
