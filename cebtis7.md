@@ -73,7 +73,7 @@ On first run the SSH user is created with a generated password. If you require a
   --env "SSH_USER_PASSWORD=Passw0rd!" \
 ...
 
-
+```
 git clone https://github.com/jdeathe/centos-ssh.git; cd centos-ssh/
 
 mkdir -p ./ssh-key; ssh-keygen -t rsa -f ./ssh-key/id_rsa -q -P ""; ls ssh-key/
@@ -715,7 +715,6 @@ IOError: [Errno 13] Permission denied: '/var/log/supervisor/supervisord.log'
         && chmod 777 /var/log/supervisor
 ...
 ...
-
-
+```
 
 
